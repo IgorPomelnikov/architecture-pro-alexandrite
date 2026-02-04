@@ -1,0 +1,21 @@
+@startuml
+
+title Обновление статуса заказа
+
+actor Operator
+participant MES_WEB_UI
+participant MES_API
+participant Redis
+queue RabbitMQ
+database MES_DB
+
+Operator --> MES_WEB_UI: запрос на обновление статуса заказа
+MES_WEB_UI --> MES_API: PATCH /order
+MES_API --> MES_DB: обновление статуса
+MES_DB --> MES_API: ОК
+MES_API --> RabbitMQ: событие об обновлении заказа
+MES_API --> Redis: обновление заказа
+MES_API --> MES_WEB_UI: 200 OK
+MES_WEB_UI --> Operator: Подтвеждрение обновления
+
+@enduml
